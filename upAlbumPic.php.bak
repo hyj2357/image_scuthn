@@ -1,10 +1,10 @@
 <?php
+/** 废弃SAE storage方法 
 	use sinacloud\sae\Storage as Storage;
-
-
 	// 方法一：在SAE运行环境中时可以不传认证信息，默认会从应用的环境变量中取
 	$s = new Storage();
-	
+ **/
+
 	if ($_FILES["file"]["error"] > 0){
 	  echo "Error: " . $_FILES["file"]["error"] . "<br />";
 	}
@@ -24,7 +24,10 @@
 		   **/
 			$type = substr($_FILES["file"]["type"],6);	//截取“image/png”后面的png
 			$path = "album/".$aid."/album_".$aid."_".$num."_".date('YmdHisu').".$type";
-			$s->putObjectFile($_FILES['file']['tmp_name'], "image1", $path);
+
+			/** 保存文件 **/
+			//$s->putObjectFile($_FILES['file']['tmp_name'], "image1", $path);
+			move_uploaded_file($_FILES["file"]["tmp_name"],$path);
 
 			header('Content-type: text/json');
 			$returndata = array(
@@ -33,11 +36,4 @@
 			echo json_encode($returndata);
 		  //}
 	}
-	/**
-    $type = substr($_FILES["file"]["type"],6);	//截取“image/png”后面的png
-	echo $type."<br/>";
-	$uid = substr($_SERVER["QUERY_STRING"],4);
-	echo "uid:".$uid."<br/>";
-	$s->putObjectFile($_FILES['file']['tmp_name'], "image1", "user_icon_".$uid."_".date('YmdHis').".$type");
-	**/
 ?>
