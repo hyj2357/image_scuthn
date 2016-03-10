@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>html5_2.html</title>
+ <meta http-equiv="content-type" content="text/html; charset=GBK">
+ <style type="text/css">
+  #parent{width:550px; height:10px; border: 6px solid #00CCFF;border-radius: 6px;box-shadow: 0px 0px 8px 0px #00CCFF;} 
+  #son {width:0; height:100%; background-color:#00CCFF; text-align:center; line-height:10px; font-size:20px; font-weight:bold;} 
+ </style>
+ <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+ <script type="text/javascript">
+ window.totalSize = 0;
+ window.currentSize = 0;
+
+ function showPic(){
+  var pics = $("#pic").get(0).files;
+  
+  for(var i=0;i<pics.length;i++)
+	console.info(pics[i]);
+
+  for(var i=0;i<pics.length;i++)
+	uploadFile(pics[i],i+1,pics.length);
+  
+  //$("img").prop("src" , window.URL.createObjectURL(pic) );
+  //uploadFile();
+ }
+
+ function clearProgress(){
+  $("#son").html( 0 +"%" );
+  $("#son").css("width" , 0 +"%");
+ }
+
+ function uploadFiles(){
+  var pics = $("#pic").get(0).files;
+  for(var i=0;i<pics.length;i++){
+	console.info(pics[i]);
+	window.totalSize += pics[i].size;
+  }
+  for(var i=0;i<pics.length;i++)
+	uploadFile(pics[i],i+1,pics.length);
+ }
+
+
+ function uploadFile(pic,current,total){
+  var formData = new FormData();
+  formData.append("file",pic);
+  
+  $.ajax({
+    url: "http://imagescuthn.applinzi.com/image/upAlbumPic.php?aid=123&num="+current,
+	type: 'POST',
+	data: formData,
+	dataType: 'json',
+	async: true,
+	cache: false,
+	contentType: false,
+	processData: false,
+    success: function(returndata){
+		 console.info(returndata);
+		 window.currentSize += pic.size;
+		 onprogress(window.currentSize,window.totalSize);
+    },
+    error:function(returndata){
+		 console.info(returndata);
+		 window.currentSize += pic.size;
+		 onprogress(window.currentSize,window.totalSize);
+    }
+  });
+ }
+
+/**
+ *
+ *改变进度条
+ *
+ **/
+ function onprogress(current,total){
+  var per = Math.floor(100*current/total);  //已经上传的百分比 
+  $("#son").html( per +"%" );
+  $("#son").css("width" , per +"%");
+ }
+
+
+ </script>
+ </head>
+ <body>
+ <img width="400" height="250"/><br /> 
+ <form action="http://imagescuthn.applinzi.com/image/upUserIcon.php?uid=123&sid=34" method="post" enctype="multipart/form-data">
+	 <input type="file" id="pic" name="pic"  multiple="multiple" onchange="clearProgress();"/>
+	 <input type="button" value="上传图片" onclick="uploadFiles()" /><br /> 
+ </form><br/><br/>
+ <div id="parent">
+  <div id="son"></div>
+ </div> 
+ </body>
+</html>
