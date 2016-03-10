@@ -23,8 +23,11 @@
 			echo "Stored in: " . $_FILES["file"]["tmp_name"][$i]."<br/>";
 		   **/
 			$type = substr($_FILES["file"]["type"],6);	//截取“image/png”后面的png
-			$path = "/usr/local/apache/htdocs/image_scuthn/album/".$aid."/album_".$aid."_".$num."_".date('YmdHisu').".$type";
-
+			$path = "album/".$aid."/album_".$aid."_".$num."_".date('YmdHisu').".$type";
+            
+			//创建album文件夹
+			mkdir("album/".$aid);
+			
 			/** 保存文件 **/
 			//$s->putObjectFile($_FILES['file']['tmp_name'], "image1", $path);
 			move_uploaded_file($_FILES["file"]["tmp_name"],$path);
