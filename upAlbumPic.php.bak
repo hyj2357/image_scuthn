@@ -9,7 +9,10 @@
 	  echo "Error: " . $_FILES["file"]["error"] . "<br />";
 	}
 	else{
-		  $aid = substr($_SERVER["QUERY_STRING"],4);
+		  $arr = explode("&",$_SERVER["QUERY_STRING"],3);	
+	      $aid = substr($arr[0],4);
+	      $num = substr($arr[1],4);
+		  
 		  $file_names = $_FILES["file"]["name"];
 
 		  //for($i=0;$i<count($_FILES["file"]["name"]);$i++){
@@ -20,7 +23,7 @@
 			echo "Stored in: " . $_FILES["file"]["tmp_name"][$i]."<br/>";
 		   **/
 			$type = substr($_FILES["file"]["type"],6);	//截取“image/png”后面的png
-			$path = "album/".$aid."/album_".$aid."_".date('YmdHisu').".$type";
+			$path = "album/".$aid."/album_".$aid."_".$num."_".date('YmdHisu').".$type";
 			$s->putObjectFile($_FILES['file']['tmp_name'], "image1", $path);
 
 			header('Content-type: text/json');

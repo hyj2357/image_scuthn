@@ -50,7 +50,7 @@
 	type: 'POST',
 	data: formData,
 	dataType: 'json',
-	async: false,
+	async: true,
 	cache: false,
 	contentType: false,
 	processData: false,
