@@ -37,12 +37,18 @@
 
 		//图片类型为 png, jpeg 或 jpg
 		if(strcmp($_FILES["file"]["type"],"image/png")==0||strcmp($_FILES["file"]["type"],"image/jpeg")==0||strcmp($_FILES["file"]["type"],"image/jpg")==0){
+			
 			$type = substr($_FILES["file"]["type"],6);							//截取“image/type”后面的type
-			$file_name = "user_icon_".$uid."_".date('YmdHis').".$type";
-			$path =  "user/".$file_name;										//path ex: image/user/user_icon_uid_20150622112343.png
-			$url  =  "http://imagescuthn-".$bucket.".stor.sinaapp.com/user%2F".$file_name;
+			
+			$file_name = "images/user/user_icon_".$uid."_".date('YmdHis').".$type";         //path ex: images/user/user_icon_uid_20150622112343.png
+
+			$url  =  "http://http://139.129.24.81:8083/image_scuthn/".$file_name;			//url ex: http://http://139.129.24.81:8083/image_scuthn/images/user/user_icon_uid_20150622112343.png
+			
 			if(checkUploadUserIcon($bucket,$url,$uid,$sid)){
-				$s->putObjectFile($_FILES['file']['tmp_name'], "image1", $path);
+				if(!is_dir('images/user/'))
+					mkdir("images/user/");
+				move_uploaded_file($_FILES["file"]["tmp_name"],$file_name);   //转存头像图片
+				
 				header('Content-type: text/json');
 				$result = array(
 					"isLogin"=>"true",

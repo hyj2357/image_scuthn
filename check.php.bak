@@ -60,9 +60,10 @@
 		$_accept = $_j['accept'];
 		if(strcmp($_accept,"true")==0){
 			$_lastUrl = $_j['lastUrl'];
-			$temp = $str_replace("http://imagescuthn-".$bucket.".stor.sinaapp.com/","",$_lastUrl);
-			$object = $str_replace("%2F","/",$temp);
-			$s->deleteObject($bucket, $object);
+			$temp = str_replace("http://139.129.24.81:8083/image_scuthn/","",$_lastUrl);
+			//$object = str_replace("%2F","/",$temp);
+			//$s->deleteObject($bucket, $object);
+			unlink($temp);
 			return true;
 		}
 		else
