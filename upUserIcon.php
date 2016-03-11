@@ -39,7 +39,7 @@
 			
 			$file_name = "images/user/user_icon_".$uid."_".date('YmdHis').".$type";         //path ex: images/user/user_icon_uid_20150622112343.png
 
-			$url  =  "http://http://139.129.24.81:8083/image_scuthn/".$file_name;			//url ex: http://http://139.129.24.81:8083/image_scuthn/images/user/user_icon_uid_20150622112343.png
+			$url  =  "http://139.129.24.81:8083/image_scuthn/".$file_name;			//url ex: http://http://139.129.24.81:8083/image_scuthn/images/user/user_icon_uid_20150622112343.png
 			
 			if(checkUploadUserIcon($bucket,$url,$uid,$sid)){
 				if(!is_dir('images/user/'))
