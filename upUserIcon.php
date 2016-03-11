@@ -1,4 +1,7 @@
 <?php
+    include 'Image.class.php';
+	include 'check.php';
+
 	//获取Query参数
 	$arr = explode("&",$_SERVER["QUERY_STRING"],3);	
 	$uid = substr($arr[0],4);
