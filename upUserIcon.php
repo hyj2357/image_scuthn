@@ -2,13 +2,15 @@
     include 'Image.class.php';
 	include 'check.php';
 
+	header('Content-type: text/json');
+	date_default_timezone_set("Asia/Hong_Kong");
+
 	//获取Query参数
 	$arr = explode("&",$_SERVER["QUERY_STRING"],3);	
 	$uid = substr($arr[0],4);
 	$sid = substr($arr[1],4);
 	//验证接受的用户会话是否已经登录
 	if(!checkOnline($uid,$sid)){
-		header('Content-type: text/json');
 		$result = array(
 			"isLogin"=>"false",
 			"accept"=>"false",
@@ -44,7 +46,6 @@
 					mkdir("images/user/");
 				move_uploaded_file($_FILES["file"]["tmp_name"],$file_name);   //转存头像图片
 				
-				header('Content-type: text/json');
 				$result = array(
 					"isLogin"=>"true",
 					"accept"=>"true",
@@ -54,7 +55,6 @@
 				return;
 			}
 			else{
-				header('Content-type: text/json');
 				$result = array(
 					"isLogin"=>"true",
 					"accept"=>"false",
@@ -64,7 +64,6 @@
 				return;
 			}
 		}else{
-			header('Content-type: text/json');
 			$result = array(
 				"isLogin"=>"true",
 				"accept"=>"false",

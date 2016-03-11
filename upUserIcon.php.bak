@@ -18,8 +18,6 @@
 		return;
 	}
 	else{
-		// 方法一：在SAE运行环境中时可以不传认证信息，默认会从应用的环境变量中取
-		$s = new Storage();		
 		/**
 			if ($_FILES["file"]["error"] > 0){
 			  echo "Error: " . $_FILES["file"]["error"] . "<br />";
