@@ -1,6 +1,4 @@
 <?php
-	use sinacloud\sae\Storage as Storage;
-
 	/**
 	 *@author YJ.Huang
 	 *
@@ -37,9 +35,7 @@
 	 *@author YJ.Huang
 	 **/
 	function checkUploadUserIcon($bucket,$url,$uid,$sid){
-		
-		$s = new Storage();	
-		
+
 		$data = array('type' => 'user_icon',
 					  'uid'  => $uid,
 					  'sid'  => $sid,
