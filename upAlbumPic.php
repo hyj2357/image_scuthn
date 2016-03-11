@@ -22,9 +22,9 @@ else{
     echo "Stored in: " . $_FILES["file"]["tmp_name"][$i]."<br/>";
      **/
     $type = substr($_FILES["file"]["type"],6);
-    $path = "album/".$aid."/album_".$aid."_".$num."_".date('YmdHisu').".$type";
-    if(!is_dir("album/".$aid))
-        mkdir("album/".$aid);
+    $path = "images/album/".$aid."/album_".$aid."_".$num."_".date('YmdHisu').".$type";
+    if(!is_dir("images/album/".$aid))
+        mkdir("images/album/".$aid);
     move_uploaded_file($_FILES["file"]["tmp_name"],$path);
     $returndata = array(
         "file" => $path
