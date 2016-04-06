@@ -1,0 +1,3 @@
+<?php
+    $IMAGE_SERVER_HOST = "http://localhost/";
+	$IMAGE_APP = "image_scuthn/";
