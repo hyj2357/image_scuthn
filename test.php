@@ -6,3 +6,4 @@
 	echo $_REQUEST['sid']."<br/>";
 	echo $_FILES["pic"]['name'];
     echo $IMAGE_SERVER_HOST.$IMAGE_APP."<br/>";
+	echo $FILE_ROOT;

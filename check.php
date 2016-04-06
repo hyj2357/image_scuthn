@@ -66,4 +66,34 @@
 			return false;
 	}
 
-?>
+	/**
+	 *@author YJ.Huang
+	 **/
+	function checkUploadAlbumPic($bucket,$url,$uid,$sid,$aid){
+
+		$data = array('type' => 'album_pic',
+					  'uid'  => $uid,
+					  'sid'  => $sid,
+			          'aid'  => $aid,
+					  'path' => $url);
+		//生成url-encode后的请求字符串，将数组转换为字符串  
+		$data = http_build_query($data);  
+		$opts = array (  
+			'http'   => array (  
+			'method' => 'POST',  
+			'header' => "Content-type: application/x-www-form-urlencoded\r\n" .  
+						"Content-Length: ".strlen($data)."\r\n",  
+			'content'=> $data)  
+		);  
+		//生成请求的句柄文件  
+		$context = stream_context_create($opts);  
+		$j = file_get_contents($SERVICE_SERVER_HOST.$SERVICE_APP.$SERVICE_ACCESS_URL_PREFIX, false, $context); 
+		$_j = json_decode($j,true);
+		$_accept = $_j['accept'];
+		if(strcmp($_accept,"true")==0){	
+			return true;			
+		}
+		else
+			return false;
+	}
+
