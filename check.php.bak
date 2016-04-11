@@ -1,4 +1,8 @@
 <?php
+    include 'util.php';
+	include 'params.php';
+
+
 	/**
 	 *@author YJ.Huang
 	 *
@@ -74,7 +78,7 @@
 		$data = array('type' => 'album_pic',
 					  'uid'  => $uid,
 					  'sid'  => $sid,
-			          'aid'  => $aid,
+			          'id'   => $aid,
 					  'path' => $url);
 		//生成url-encode后的请求字符串，将数组转换为字符串  
 		$data = http_build_query($data);  
@@ -87,18 +91,55 @@
 		);  
 		//生成请求的句柄文件  
 		$context = stream_context_create($opts);  
-		$j = file_get_contents($SERVICE_SERVER_HOST.$SERVICE_APP.$SERVICE_ACCESS_URL_PREFIX, false, $context); 
+		$j = file_get_contents($SERVICE_SERVER_HOST.$SP.$SERVICE_APP.$SP.$SERVICE_ACCESS_URL_PREFIX, false, $context); 
 		$_j = json_decode($j,true);
 		$_accept = $_j['accept'];
-		if(strcmp($_accept,"true")==0){
-			$_lastUrl = $_j['lastUrl'];
-			if(!($_lastUrl=='image/default/ui1.png') && !($_lastUrl=='image/default/ui2.png') && !($_lastUrl=='image/default/ui3.png')){ //如果不为默认头像
-				$temp = str_replace("http://139.129.24.81:8083/image_scuthn/","",$_lastUrl);
-				unlink($temp);
-			}	
+		if(strcmp($_accept,"true")==0){	
 			return true;			
 		}
 		else
 			return false;
 	}
 
+    /**
+	 *
+	 * 验证上传相册首页图片
+	 *
+	 **/
+	function checkUploadAlbumTopPic($url,$uid,$sid,$aid){
+		$data = array('type' => 'album_pic_top',
+					  'uid'  => $uid,
+					  'sid'  => $sid,
+			          'id'   => $aid,
+					  'path' => $url);
+
+		//生成url-encode后的请求字符串，将数组转换为字符串  
+		$data = http_build_query($data);  
+		$opts = array (  
+			'http'   => array (  
+			'method' => 'POST',  
+			'header' => "Content-type: application/x-www-form-urlencoded\r\n" .  
+						"Content-Length: ".strlen($data)."\r\n",  
+			'content'=> $data)  
+		);  
+		//生成请求的句柄文件  
+		$context = stream_context_create($opts);  
+		$j = file_get_contents(g('SERVICE_SERVER_HOST').g('SP').g('SERVICE_APP').g('SP').g('SERVICE_ACCESS_URL_PREFIX'), false, $context); 
+		$_j = json_decode($j,true);
+		$_accept = $_j['accept'];
+		if(strcmp($_accept,"true")==0){	
+			$_lastUrl = $_j['lastUrl'];
+			if(!($_lastUrl=='image/default/tree.png')){ //如果不为默认首页图
+				
+				$temp = str_replace(g('IMAGE_ACCESS_URL_PREFIX'),"",$_lastUrl);
+			
+				/*删除原图以及缩略图*/
+				unlink($temp);				
+				unlink(sourceFileNameToThumbFileNameX($temp,"320200"));
+                unlink(sourceFileNameToThumbFileNameX($temp,"1200450"));
+			}
+			return true;
+		}
+		else
+			return false;        
+ 	}

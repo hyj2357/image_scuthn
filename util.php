@@ -1,0 +1,8 @@
+<?php
+    
+function sourceFileNameToThumbFileNameX($filename,$thumb_size){
+    $arr = explode(".",$filename);
+	$temp_filename = $arr[0];
+	$type = $arr[1];
+    return $temp_filename."_thumb_".$thumb_size.".$type";
+}	

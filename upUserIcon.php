@@ -2,6 +2,8 @@
     include 'Image.class.php';
 	include 'check.php';
 	include 'params.php';
+    include 'util.php';
+
 
 	header('Content-type: text/json');
 	date_default_timezone_set("Asia/Hong_Kong");

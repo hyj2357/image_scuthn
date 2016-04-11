@@ -1,9 +1,11 @@
 <?php
-include 'thumb_image.php';
-include 'check.php';
+	include 'thumb_image.php';
+	include 'check.php';
+
+    
 
 	header('Content-type: text/json');
-	/*è®¾ç½®è·¨åŸŸè®¿é—®*/
+	/*ÉèÖÃ¿çÓò·ÃÎÊ*/
 	$origin = isset($_SERVER['HTTP_ORIGIN'])?$_SERVER['HTTP_ORIGIN']:"";
 	$allow_origin = array(
 	   g('SERVICE_SERVER_HOST')
@@ -14,62 +16,63 @@ include 'check.php';
        header("Access-Control-Allow-Headers:x-requested-with,content-type");
 	}
 	
-
-date_default_timezone_set("Asia/Hong_Kong");
-if ($_FILES["file"]["error"] > 0){
+	date_default_timezone_set("Asia/Hong_Kong");
+    
+	/*ÎÄ¼şÉÏ´«Ê§°Ü*/
+	if ($_FILES["file"]["error"] > 0){
     echo "Error: " . $_FILES["file"]["error"] . "<br />";
-}
-else{
-    header('Content-type: text/json');
-    $arr = explode("&",$_SERVER["QUERY_STRING"],3);
-    $aid = $_REQUEST['aid'];
-    $sid = $_REQUEST['sid'];
+	}
+
+	//»ñÈ¡Query²ÎÊı
     $uid = $_REQUEST['uid'];
-    $num = $_REQUEST['num'];
-    $file_names = $_FILES["file"]["name"];
-/*	
+	$sid = $_REQUEST['sid'];
+    $aid = $_REQUEST['aid'];
+	$file_names = $_FILES["file"]["name"];
+
+/**
+	//ÑéÖ¤½ÓÊÜµÄÓÃ»§»á»°ÊÇ·ñÒÑ¾­µÇÂ¼
 	if(!checkOnline($uid,$sid)){
 		$result = array(
-				"isLogin"=>"false",
-				"accept"=>"false",
-				"typeerr"=>"false",
-				"outmem"=>"true",
-				"url"=>""
+			"isLogin"=>"false",
+			"accept"=>"false",
+			"url"=>""
 		);
 		echo json_encode($result);
 		return;
 	}
-  */  
+	**/
+	//else{
 	$type = substr($_FILES["file"]["type"],6);
 	if(strcmp($_FILES["file"]["type"],"image/png")==0||strcmp($_FILES["file"]["type"],"image/jpeg")==0||strcmp($_FILES["file"]["type"],"image/jpg")==0){
 		
-		/*å›¾ç‰‡å¤§å°ä¸è¶…è¿‡3MB*/
+		/*Í¼Æ¬´óĞ¡²»³¬¹ı3MB*/
 		if($_FILES["file"]["size"]<3*1024*1024){
 		
-			/*å¦‚æœå›¾ç‰‡ç±»å‹ä¸ºjpg,åˆ™è½¬åŒ–ä¸ºjpeg*/
+			/*Èç¹ûÍ¼Æ¬ÀàĞÍÎªjpg,Ôò×ª»¯Îªjpeg*/
 			$type = strcmp($type,"jpg")==0?"jpeg":$type;
 			
-			/*ç”Ÿæˆå›¾ç‰‡ç›¸å¯¹è·¯å¾„*/
+			/*Éú³ÉÍ¼Æ¬Ïà¶ÔÂ·¾¶*/
 			$dateString = date("YmdHis")."";
-			$path = "images/album/".$aid."/album_".$aid."_".$num."_".$dateString.".$type";
-			$path_thumb_320200 = "images/album/".$aid."/album_".$aid."_".$num."_".$dateString."_thumb_320200".".$type";
-
-			/**ç”Ÿæˆå›¾ç‰‡æ–‡ä»¶è®¿é—®url*/            
+			$path = "images/album/".$aid."/album_".$aid."_".$dateString.".$type";
+			$path_thumb_320200 = "images/album/".$aid."/album_".$aid."_".$dateString."_thumb_320200".".$type";
+			
+			/**Éú³ÉÍ¼Æ¬ÎÄ¼ş·ÃÎÊurl*/
 			$url_path = g('IMAGE_ACCESS_URL_PREFIX').$path;
+			$url_path_thumb_320200 = g('IMAGE_ACCESS_URL_PREFIX').$path_thumb_320200;
 
-            /*æŒ‰å›¾ç‰‡ç»å¯¹è·¯å¾„ $FILE_ROOT.$path è¿›è¡ŒåŸå›¾å­˜å‚¨*/
+			/*°´Í¼Æ¬¾ø¶ÔÂ·¾¶ $FILE_ROOT.$path ½øĞĞÔ­Í¼´æ´¢*/
 			if(!is_dir(g('FILE_ROOT')."images/album/".$aid))
 				mkdir(g('FILE_ROOT')."images/album/".$aid);
 
-			/*å¦‚æœä¸šåŠ¡æœåŠ¡å™¨å“åº”å¤±è´¥,åˆ™ç»“æŸå½“å‰æ“ä½œ*/
-			if(!checkUploadAlbumPic($url_path,$uid,$sid,$aid))
+			/*Èç¹ûÒµÎñ·şÎñÆ÷ÏìÓ¦Ê§°Ü,Ôò½áÊøµ±Ç°²Ù×÷*/
+			if(!checkUploadAlbumTopPic($url_path,$uid,$sid,$aid))
 				return;
 
-			/*ç”ŸæˆåŸå›¾å’Œç¼©ç•¥å›¾åˆ°åŸå›¾è·¯å¾„ä¸‹*/
+			/*Éú³ÉÔ­Í¼ºÍËõÂÔÍ¼µ½Ô­Í¼Â·¾¶ÏÂ*/
 			move_uploaded_file($_FILES["file"]["tmp_name"],g('FILE_ROOT').$path);
 			$isSucc = img2thumb(g('FILE_ROOT').$path, g('FILE_ROOT').$path_thumb_320200, $width = 320, $height = 200, $cut = 1, $proportion = 0);
 			
-			/*æˆåŠŸåˆ™è¿”å›ç¼©ç•¥å›¾320*200çš„è®¿é—®url*/
+			/*³É¹¦Ôò·µ»ØËõÂÔÍ¼320*200µÄ·ÃÎÊurl*/
 			if($isSucc){
 			  $returndata = array(
 				"isLogin"=>"true",
@@ -81,8 +84,8 @@ else{
 			  echo json_encode($returndata);
 			  return;
 			}else{
-			  /*ç¼©ç•¥å›¾ç”Ÿæˆå¤±è´¥åˆ™åˆ é™¤åŸæ–‡ä»¶*/
-			  unlink(g('FILE_ROOT').$path);
+			  /*ËõÂÔÍ¼Éú³ÉÊ§°ÜÔòÉ¾³ıÔ­ÎÄ¼ş*/
+			  unlink($FILE_ROOT.$path);
 			  
 			  $returndata = array(
 				"isLogin"=>"true",
@@ -108,7 +111,7 @@ else{
 	}else{
 		$returndata = array(
 			"isLogin"=>"true",
-		    "accept"=>"false",
+			"accept"=>"false",
 			"typeerr"=>"true",
 			"outmem"=>"false",
 			"url"=>""
@@ -116,5 +119,4 @@ else{
 		echo json_encode($returndata);
 		return;
 	}
-}
-
+	//}
