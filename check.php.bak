@@ -3,11 +3,13 @@
 	include 'params.php';
 
 
+class Check{
+
 	/**
 	 *@author YJ.Huang
 	 *
 	 **/
-	function checkOnline($uid,$sid){
+	public function checkOnline($uid,$sid){
 		/**
 		$data = array ('type' => 'user_icon',
 					   'uid'  => '7',
@@ -38,7 +40,7 @@
 	/**
 	 *@author YJ.Huang
 	 **/
-	function checkUploadUserIcon($bucket,$url,$uid,$sid){
+	public function checkUploadUserIcon($bucket,$url,$uid,$sid){
 
 		$data = array('type' => 'user_icon',
 					  'uid'  => $uid,
@@ -71,9 +73,10 @@
 	}
 
 	/**
-	 *@author YJ.Huang
+	 * 验证上传相册图片
+	 * @author YJ.Huang
 	 **/
-	function checkUploadAlbumPic($bucket,$url,$uid,$sid,$aid){
+	public function checkUploadAlbumPic($url,$uid,$sid,$aid){
 
 		$data = array('type' => 'album_pic',
 					  'uid'  => $uid,
@@ -91,7 +94,7 @@
 		);  
 		//生成请求的句柄文件  
 		$context = stream_context_create($opts);  
-		$j = file_get_contents($SERVICE_SERVER_HOST.$SP.$SERVICE_APP.$SP.$SERVICE_ACCESS_URL_PREFIX, false, $context); 
+		$j = file_get_contents(g('SERVICE_SERVER_HOST').g('SP').g('SERVICE_APP').g('SP').g('SERVICE_ACCESS_URL_PREFIX'), false, $context); 
 		$_j = json_decode($j,true);
 		$_accept = $_j['accept'];
 		if(strcmp($_accept,"true")==0){	
@@ -106,7 +109,7 @@
 	 * 验证上传相册首页图片
 	 *
 	 **/
-	function checkUploadAlbumTopPic($url,$uid,$sid,$aid){
+	public function checkUploadAlbumTopPic($url,$uid,$sid,$aid){
 		$data = array('type' => 'album_pic_top',
 					  'uid'  => $uid,
 					  'sid'  => $sid,
@@ -143,3 +146,48 @@
 		else
 			return false;        
  	}
+
+
+    /**
+	 *
+	 * 验证删除相册图片
+	 *
+	 **/	
+    public function checkDeleAlbumPic($aid,$sid,$uid,$pid){
+		$data = array('type' => 'd_album_pic',
+					  'uid'  => $uid,
+					  'sid'  => $sid,
+			          'id'   => $aid,
+					  'pid' => $pid);
+		//生成url-encode后的请求字符串，将数组转换为字符串  
+		$data = http_build_query($data);  
+		$opts = array (  
+			'http'   => array (  
+			'method' => 'POST',  
+			'header' => "Content-type: application/x-www-form-urlencoded\r\n" .  
+						"Content-Length: ".strlen($data)."\r\n",  
+			'content'=> $data)  
+		);
+		
+		//生成请求的句柄文件  
+		$context = stream_context_create($opts);  
+		$j = file_get_contents(g('SERVICE_SERVER_HOST').g('SP').g('SERVICE_APP').g('SP').g('SERVICE_ACCESS_URL_PREFIX'), false, $context); 
+		$_j = json_decode($j,true);
+		$_accept = $_j['accept'];
+
+		/*业务服务器端如果接受返回true，反之返回false*/
+		if(strcmp($_accept,"true")==0){
+			$_lastUrl = $_j['lastUrl'];
+			$temp = str_replace(g('IMAGE_ACCESS_URL_PREFIX'),"",$_lastUrl);
+			
+			/*删除原图以及缩略图*/
+			unlink($temp);				
+			unlink(sourceFileNameToThumbFileNameX($temp,"320200"));
+			return true;
+		}
+		else
+			return false;
+
+	}
+
+}

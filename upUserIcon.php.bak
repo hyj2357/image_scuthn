@@ -1,57 +1,68 @@
 <?php
-    include 'Image.class.php';
 	include 'check.php';
-	include 'params.php';
+	include 'thumb_image.php';
+    
 
 	header('Content-type: text/json');
+	/*设置跨域访问*/
+	$origin = isset($_SERVER['HTTP_ORIGIN'])?$_SERVER['HTTP_ORIGIN']:"";
+	$allow_origin = array(
+	   g('SERVICE_SERVER_HOST')
+	);
+	if(in_array($origin, $allow_origin)){
+	   header("Access-Control-Allow-Origin:".$origin);
+       header("Access-Control-Allow-Methods:POST");
+       header("Access-Control-Allow-Headers:x-requested-with,content-type");
+	}
+	
 	date_default_timezone_set("Asia/Hong_Kong");
 
 	//获取Query参数
-	$arr = explode("&",$_SERVER["QUERY_STRING"],3);	
-	$uid = substr($arr[0],4);
-	$sid = substr($arr[1],4);
-	//验证接受的用户会话是否已经登录
-	if(!checkOnline($uid,$sid)){
-		$result = array(
-			"isLogin"=>"false",
-			"accept"=>"false",
-			"url"=>""
-		);
-		echo json_encode($result);
-		return;
-	}
-	else{
-		/**
-			if ($_FILES["file"]["error"] > 0){
-			  echo "Error: " . $_FILES["file"]["error"] . "<br />";
-			}
-			else{
-			  echo "Upload: " . $_FILES["file"]["name"] . "<br />";
-			  echo "Type: " . $_FILES["file"]["type"] . "<br />";
-			  echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
-			  echo "Stored in: " . $_FILES["file"]["tmp_name"]."<br/>";
-			}
-		 **/
+    $uid = $_REQUEST['uid'];
+	$sid = $_REQUEST['sid'];
 
-		//图片类型为 png, jpeg 或 jpg
-		if(strcmp($_FILES["file"]["type"],"image/png")==0||strcmp($_FILES["file"]["type"],"image/jpeg")==0||strcmp($_FILES["file"]["type"],"image/jpg")==0){
-			
+	$result= "";
+	//图片类型为 png, jpeg 或 jpg
+	if(strcmp($_FILES["file"]["type"],"image/png")==0||strcmp($_FILES["file"]["type"],"image/jpeg")==0||strcmp($_FILES["file"]["type"],"image/jpg")==0){
+		/*图片大小不超过2MB*/
+		if($_FILES["file"]["size"]<2*1024*1024){			
 			$type = substr($_FILES["file"]["type"],6);							//截取“image/type”后面的type
+		    
+			/*生成图片相对路径*/
+			$dateString = date("YmdHis")."";
 			
-			$file_name = "images/user/user_icon_".$uid."_".date('YmdHis').".$type";         //path ex: images/user/user_icon_uid_20150622112343.png
+			$path = "images/user/user_icon_".$uid."_".$dateString.".$type";         
+			$path_thumb_129129 = "images/album/".$aid."/album_".$uid."_".$dateString."_thumb_320200".".$type";
 
-			$url  =  "http://139.129.24.81:8083/image_scuthn/".$file_name;			//url ex: http://http://139.129.24.81:8083/image_scuthn/images/user/user_icon_uid_20150622112343.png
 			
-			if(checkUploadUserIcon($bucket,$url,$uid,$sid)){
-				if(!is_dir('images/user/'))
-					mkdir("images/user/");
-				move_uploaded_file($_FILES["file"]["tmp_name"],$file_name);   //转存头像图片
+			/**生成图片文件访问url*/
+			$url_path = g('IMAGE_ACCESS_URL_PREFIX').$path;
+			$url_path_thumb_129129 = g('IMAGE_ACCESS_URL_PREFIX').$path_thumb_129129;
+
+			if(!is_dir('images/user/'))
+				mkdir("images/user/");
+
+			$_check = new Check();
+			if($_check->checkUploadUserIcon($url_path_thumb_129129,$uid,$sid)){
+				/*转存头像图片*/
+				move_uploaded_file($_FILES["file"]["tmp_name"],g('FILE_ROOT').$path);	
+				$isSucc = img2thumb(g('FILE_ROOT').$path, g('FILE_ROOT').$path_thumb_129129, $width = 129, $height = 129, $cut = 1, $proportion = 0);
 				
-				$result = array(
-					"isLogin"=>"true",
-					"accept"=>"true",
-					"url"=>$url
-				);
+				$result = "";
+				if($isSucc){
+					$result = array(
+						"isLogin"=>"true",
+						"accept"=>"true",
+						"url"=>$url_path_thumb_129129
+					);
+				}else{
+					$result = array(
+						"isLogin"=>"true",
+						"accept"=>"false",
+						"url"=>""
+					);
+				}
+				unlink(g('FILE_ROOT').$path);
 				echo json_encode($result);
 				return;
 			}
@@ -73,5 +84,15 @@
 			echo json_encode($result);
 			return;
 		}
+	}else{
+		$result = array(
+			"isLogin"=>"true",
+			"accept"=>"false",
+			"outmem"=>"true",
+			"url"=>""
+		);
+		echo json_encode($result);
+		return;
 	}
+
 ?>

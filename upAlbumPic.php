@@ -62,7 +62,8 @@ else{
 				mkdir(g('FILE_ROOT')."images/album/".$aid);
 
 			/*如果业务服务器响应失败,则结束当前操作*/
-			if(!checkUploadAlbumPic($url_path,$uid,$sid,$aid))
+			$_check = new Check();
+			if(!$_check->checkUploadAlbumPic($url_path,$uid,$sid,$aid))
 				return;
 
 			/*生成原图和缩略图到原图路径下*/

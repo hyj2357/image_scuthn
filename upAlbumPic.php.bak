@@ -55,7 +55,7 @@ else{
 			$path_thumb_320200 = "images/album/".$aid."/album_".$aid."_".$num."_".$dateString."_thumb_320200".".$type";
 
 			/**生成图片文件访问url*/            
-			$url_path = g('SERVICE_SERVER_HOST').g('SP').g('SERVICE_APP').g('SP').g('SERVICE_ACCESS_URL_PREFIX').$path;
+			$url_path = g('IMAGE_ACCESS_URL_PREFIX').$path;
 
             /*按图片绝对路径 $FILE_ROOT.$path 进行原图存储*/
 			if(!is_dir(g('FILE_ROOT')."images/album/".$aid))
