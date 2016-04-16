@@ -40,7 +40,7 @@ class Check{
 	/**
 	 *@author YJ.Huang
 	 **/
-	public function checkUploadUserIcon($bucket,$url,$uid,$sid){
+	public function checkUploadUserIcon($url,$uid,$sid){
 
 		$data = array('type' => 'user_icon',
 					  'uid'  => $uid,
@@ -57,13 +57,13 @@ class Check{
 		);  
 		//生成请求的句柄文件  
 		$context = stream_context_create($opts);  
-		$j = file_get_contents('http://139.129.24.81:8082/scuthnweb2/AcceptImage', false, $context); 
+		$j = file_get_contents(g('SERVICE_SERVER_HOST').g('SP').g('SERVICE_APP').g('SP').g('SERVICE_ACCESS_URL_PREFIX'), false, $context); 
 		$_j = json_decode($j,true);
 		$_accept = $_j['accept'];
 		if(strcmp($_accept,"true")==0){
 			$_lastUrl = $_j['lastUrl'];
 			if(!($_lastUrl=='image/default/ui1.png') && !($_lastUrl=='image/default/ui2.png') && !($_lastUrl=='image/default/ui3.png')){ //如果不为默认头像
-				$temp = str_replace("http://139.129.24.81:8083/image_scuthn/","",$_lastUrl);
+				$temp = str_replace(g('IMAGE_ACCESS_URL_PREFIX'),"",$_lastUrl);
 				unlink($temp);
 			}	
 			return true;			
@@ -139,7 +139,7 @@ class Check{
 				/*删除原图以及缩略图*/
 				unlink($temp);				
 				unlink(sourceFileNameToThumbFileNameX($temp,"320200"));
-                unlink(sourceFileNameToThumbFileNameX($temp,"1200450"));
+                unlink(sourceFileNameToThumbFileNameX($temp,"1200482"));
 			}
 			return true;
 		}

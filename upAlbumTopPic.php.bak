@@ -55,13 +55,13 @@
 			$dateString = date("YmdHis")."";
 			$path = "images/album/".$aid."/album_".$aid."_".$dateString.".$type";
 			$path_thumb_320200 = "images/album/".$aid."/album_".$aid."_".$dateString."_thumb_320200".".$type";
-            $path_thumb_1200450 = "images/album/".$aid."/album_".$aid."_".$dateString."_thumb_1200450".".$type";
+            $path_thumb_1200482 = "images/album/".$aid."/album_".$aid."_".$dateString."_thumb_1200482".".$type";
 
 			
 			/**生成图片文件访问url*/
 			$url_path = g('IMAGE_ACCESS_URL_PREFIX').$path;
 			$url_path_thumb_320200 = g('IMAGE_ACCESS_URL_PREFIX').$path_thumb_320200;
-			$url_path_thumb_1200450 = g('IMAGE_ACCESS_URL_PREFIX').$path_thumb_1200450;
+			$url_path_thumb_1200482 = g('IMAGE_ACCESS_URL_PREFIX').$path_thumb_1200482;
 
 			/*按图片绝对路径 $FILE_ROOT.$path 进行原图存储*/
 			if(!is_dir(g('FILE_ROOT')."images/album/".$aid))
@@ -75,7 +75,7 @@
 			/*生成原图和缩略图到原图路径下*/
 			move_uploaded_file($_FILES["file"]["tmp_name"],g('FILE_ROOT').$path);
 			$isSucc = img2thumb(g('FILE_ROOT').$path, g('FILE_ROOT').$path_thumb_320200, $width = 320, $height = 200, $cut = 1, $proportion = 0);
-            $isSucc = img2thumb(g('FILE_ROOT').$path, g('FILE_ROOT').$path_thumb_1200450, $width = 1200, $height = 450, $cut = 1, $proportion = 0);
+            $isSucc = img2thumb(g('FILE_ROOT').$path, g('FILE_ROOT').$path_thumb_1200482, $width = 1200, $height = 450, $cut = 1, $proportion = 0);
 
 			
 			/*成功则返回缩略图320*200的访问url*/
@@ -85,7 +85,7 @@
 				"accept"=>"true",
 				"typeerr"=>"false",
 				"outmem"=>"false",
-				"url"=>g('IMAGE_ACCESS_URL_PREFIX').$path_thumb_320200
+				"url"=>$url_path_thumb_320200
 			  );
 			  echo json_encode($returndata);
 			  return;
